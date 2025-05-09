@@ -28,7 +28,7 @@
             customers = 0;
             day = 0;
             //logMessage("Welcome to your Lemonade Stand!");
-            company = document.getElementById("name").value;
+            if (company == "") { company = document.getElementById("name").value; }
             //company = prompt("What would you like your Lemonade Stand to be called?");
             clearLog();
             playDay();
@@ -114,6 +114,7 @@
             } else {
                 logMessage(`You are bankrupt with $${(money / 100).toFixed(2)} dollars.`);
             }
+            document.getElementById("startButton").innerHTML = "Restart Game";
             document.getElementById("startButton").removeAttribute("disabled");
             //const playAgain = confirm("Play again?");
             //if (playAgain) {
