@@ -7,8 +7,12 @@
 </head>
 <body>
     <h1>Lemonade Stand Game</h1>
-    <p>Open the browser console to play the game! Then press button.</p>
+    <div id="output" class="log">
+    <p>Welcome to your Lemonade Stand!</p>
+    <p><img src="lemonade.jpeg">
+    <p><label for="name">Enter your company name:</label>
+     <input type="text" id="name" name="name" placeholder="Lemonade Stand"> </p> </div>
     <script src="lemonade.js"></script>
-    <button onclick="startGame()">Start Game</button>
+    <button id="startButton" onclick="startGame()">Start Game</button>
 </body>
 </html>
