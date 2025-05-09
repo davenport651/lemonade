@@ -22,13 +22,15 @@
         }
 
         function startGame() {
+            document.getElementById("startButton").setAttribute("disabled", true);
             supplies = 0;
             money = 500;
             customers = 0;
             day = 0;
+            //logMessage("Welcome to your Lemonade Stand!");
+            company = document.getElementById("name").value;
+            //company = prompt("What would you like your Lemonade Stand to be called?");
             clearLog();
-            logMessage("Welcome to your Lemonade Stand!");
-            company = prompt("What would you like your Lemonade Stand to be called?");
             playDay();
         }
 
@@ -48,16 +50,16 @@
             logMessage(`${company} -- DAY ${day} --`);
             if (day === 1) {
                 logMessage(`You're starting with $${(money / 100).toFixed(2)} dollars.`);
+            } else {
+                    logMessage(`You have $${(money / 100).toFixed(2)} dollars.`);
             }
-            logMessage(`You have $${(money / 100).toFixed(2)} dollars.`);
-
             // Determine temperature
             temp = generateTemperature(day);
             while (temp < 35) {
                 temp = generateTemperature(day);
             }
             if (temp > 90) {
-                logMessage("It's a scorcher!");
+                logMessage("It's a scorcher! " + `${temp} degrees.`);
             } else if (temp < 45) {
                 logMessage("Put on your jacket!");
             }
@@ -65,17 +67,17 @@
 
             // Determine customers
             if (temp < 50) {
-                customers = Math.floor(Math.random() * 3);
-            } else if (temp >= 50 && temp < 80) {
+                customers = Math.floor(Math.random() * 5);
+            } else if (temp >= 50 && temp < 70) {
                 customers = Math.floor(Math.random() * 11);
-            } else if (temp >= 80) {
-                customers = Math.floor(Math.random() * 25);
+            } else if (temp >= 70) {
+                customers = Math.floor(Math.random() * 40);
             }
-            if (customers < 8) {
+            if (customers < 4) {
                 logMessage("Not much business.");
-            } else if (customers > 20) {
+            } else if (customers > 9) {
                 logMessage("Good business!");
-            } else if (customers === 25) {
+            } else if (customers > 20) {
                 logMessage("JACKPOT!");
             }
             logMessage(`${customers} customers.`);
@@ -86,19 +88,20 @@
 
             // Calculate supply cost
             const baseSupplyCost = 200; // A reasonable base cost (e.g., $2.00)
-            const costPerCustomer = 40; // Cost per customer (e.g., $0.10)
-            const randomness = Math.floor(Math.random() * 50); // Random factor (e.g., $0.00 to $0.50)
+            const costPerCustomer = 25; // Cost per customer (e.g., $0.25)
+            const randomness = Math.floor((100 - temp) * 0.2); // Higher cost when temp is lower
+            //const randomness = Math.floor(Math.random() * 50); // old Random factor (e.g., $0.00 to $0.50)
 
             supplies = baseSupplyCost + (costPerCustomer * customers) + randomness;
             logMessage(`$${(supplies / 100).toFixed(2)} supply cost.`);
 
             // Calculate money
-            money = customers * 50 + money;
+            money = customers * 100 + money;
             money = money - supplies;
 
             // End of the day
-            logMessage(`Result: $${(money / 100).toFixed(2)} dollars.`);
             if (money > 0 && day < 84) {
+                logMessage(`Result: $${(money / 100).toFixed(2)} dollars.`);
                 setTimeout(playDay, 8000); // Automatically play the next day after 8 second
             } else {
                 endGame();
@@ -111,6 +114,7 @@
             } else {
                 logMessage(`You are bankrupt with $${(money / 100).toFixed(2)} dollars.`);
             }
+            document.getElementById("startButton").removeAttribute("disabled");
             //const playAgain = confirm("Play again?");
             //if (playAgain) {
             //    startGame();
@@ -119,4 +123,4 @@
             //}
         }
 
-        startButton.addEventListener("click", startGame);
+        //startButton.addEventListener("click", startGame);
