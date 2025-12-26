@@ -4,15 +4,120 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lemonade Stand</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        #dashboard {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        .stat-box {
+            flex: 1;
+            padding: 10px;
+        }
+        .icon-large {
+            font-size: 3em;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .customer-icons {
+            font-size: 1.5em;
+            letter-spacing: 2px;
+            word-break: break-all;
+            color: #555;
+        }
+        #output {
+            text-align: left;
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 200px;
+            overflow-y: scroll;
+            margin-bottom: 20px;
+            background: #fff;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            background-color: #ffeb3b;
+            border: none;
+            border-radius: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #fdd835;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        #nextDayButton {
+            background-color: #4caf50;
+            color: white;
+            display: none; /* Hidden by default */
+        }
+        #nextDayButton:hover {
+            background-color: #43a047;
+        }
+
+        /* Icon specific colors */
+        .fa-sun { color: #ffa500; }
+        .fa-cloud-sun { color: #ffcc00; }
+        .fa-cloud { color: #777; }
+        .fa-snowflake { color: #00bcd4; }
+        .fa-money-bill-1 { color: #4caf50; }
+        .fa-user { color: #333; }
+    </style>
 </head>
 <body>
     <h1>Lemonade Stand Game</h1>
-    <div id="output" class="log">
-    <p>Welcome to your Lemonade Stand!</p>
-    <p><img src="lemonade.jpeg">
-    <p><label for="name">Enter your company name:</label>
-     <input type="text" id="name" name="name" placeholder="Lemonade Stand"> </p> </div>
+
+    <div id="setup-area">
+        <p>Welcome to your Lemonade Stand!</p>
+        <p><img src="lemonade.jpeg" style="max-width: 100%; height: auto;"></p>
+        <p>
+            <label for="name">Enter your company name:</label>
+            <input type="text" id="name" name="name" placeholder="Lemonade Stand">
+        </p>
+    </div>
+
+    <div id="dashboard" style="display:none;">
+        <div class="stat-box">
+            <h3>Weather</h3>
+            <span id="weather-icon" class="icon-large"><i class="fa-solid fa-question"></i></span>
+            <div id="weather-desc">--</div>
+        </div>
+        <div class="stat-box">
+            <h3>Customers</h3>
+            <div id="customer-count" class="icon-large">0</div>
+            <div id="customer-visuals" class="customer-icons"></div>
+        </div>
+        <div class="stat-box">
+            <h3>Finances</h3>
+            <span class="icon-large"><i class="fa-solid fa-money-bill-1"></i></span>
+            <div id="money-display">$0.00</div>
+        </div>
+    </div>
+
+    <div id="output" class="log"></div>
+
+    <div>
+        <button id="startButton" onclick="startGame()">Start Game</button>
+        <button id="nextDayButton" onclick="playDay()">Next Day</button>
+    </div>
+
     <script src="lemonade.js"></script>
-    <button id="startButton" onclick="startGame()">Start Game</button>
 </body>
 </html>
