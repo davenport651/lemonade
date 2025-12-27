@@ -121,8 +121,8 @@ const Simulation = {
         let maxTemp = 80;
 
         if (month === 4) { // May: Cooler
-            minTemp = 45;
-            maxTemp = 75;
+            minTemp = 40;
+            maxTemp = 65;
         } else if (month === 5) { // June: Warming up
             minTemp = 60;
             maxTemp = 85;
@@ -143,7 +143,8 @@ const Simulation = {
         let temp = Math.floor(Math.random() * (maxTemp - minTemp + 1)) + minTemp;
 
         // Occasional extremes
-        if (Math.random() < 0.1) temp += 10; // Heatwave
+        // Heatwaves are less likely in May
+        if (month !== 4 && Math.random() < 0.1) temp += 10; // Heatwave (Not in May)
         if (Math.random() < 0.1) temp -= 10; // Cold snap
 
         // Customer Logic based on Temp
