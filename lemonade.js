@@ -148,16 +148,20 @@ const Simulation = {
         if (Math.random() < 0.1) temp -= 10; // Cold snap
 
         // Customer Logic based on Temp
+        // Mathematical formula: (Temp - 40)^1.5 / 6.5
+        // Designed so 60F is roughly break-even.
         let customers = 0;
-        if (temp < 50) {
-            customers = Math.floor(Math.random() * 5); // 0-4
-        } else if (temp < 65) {
-            customers = Math.floor(Math.random() * 15) + 5; // 5-19
-        } else if (temp < 80) {
-            customers = Math.floor(Math.random() * 30) + 10; // 10-39
+        if (temp > 40) {
+            customers = Math.pow((temp - 40), 1.5) / 6.5;
         } else {
-            customers = Math.floor(Math.random() * 40) + 20; // 20-59
+            customers = 0;
         }
+
+        // Add randomness (+/- 30%)
+        const variance = (Math.random() * 0.6) + 0.7; // 0.7 to 1.3
+        customers = Math.floor(customers * variance);
+
+        // NOTE: A season penalty (e.g., May dates * 0.7) could be added here if needed.
 
         // Financials
         const pricePerCup = 100; // 1.00 dollar (in cents)
