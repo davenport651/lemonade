@@ -13,15 +13,43 @@
             padding: 20px;
             text-align: center;
         }
-        #dashboard {
-            display: flex;
-            justify-content: space-around;
+
+        /* Dashboard Styling */
+        #dashboard-container {
+            display: none; /* Hidden until game starts */
+            flex-direction: column;
             margin: 20px 0;
-            padding: 20px;
             border: 2px solid #eee;
             border-radius: 10px;
             background-color: #f9f9f9;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
+
+        #dashboard-header {
+            background-color: #e0e0e0;
+            padding: 15px;
+            border-radius: 8px 8px 0 0;
+            border-bottom: 1px solid #ccc;
+        }
+
+        #company-name-display { font-size: 1.2em; font-weight: bold; margin-bottom: 5px; }
+        #date-display { font-size: 1.1em; color: #333; margin-bottom: 5px; }
+        #flavor-text { font-style: italic; color: #666; font-size: 1.0em; min-height: 1.2em; }
+
+        #dashboard-stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+        }
+
+        #dashboard-footer {
+            background-color: #e0e0e0;
+            padding: 10px;
+            border-radius: 0 0 8px 8px;
+            border-top: 1px solid #ccc;
+            font-weight: bold;
+        }
+
         .stat-box {
             flex: 1;
             padding: 10px;
@@ -37,39 +65,93 @@
             word-break: break-all;
             color: #555;
         }
+
+        /* Log Area */
         #output {
             text-align: left;
             border: 1px solid #ccc;
             padding: 10px;
-            height: 200px;
+            height: 150px;
             overflow-y: scroll;
             margin-bottom: 20px;
             background: #fff;
         }
+
+        /* Controls */
+        #controls-area {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
         button {
             padding: 10px 20px;
-            font-size: 1.2em;
+            font-size: 1.1em;
             cursor: pointer;
-            background-color: #ffeb3b;
             border: none;
             border-radius: 5px;
-            color: #333;
             font-weight: bold;
+            transition: background 0.3s;
         }
-        button:hover {
-            background-color: #fdd835;
-        }
+
         button:disabled {
-            background-color: #ccc;
+            background-color: #ccc !important;
             cursor: not-allowed;
+            opacity: 0.6;
         }
-        #nextDayButton {
-            background-color: #4caf50;
+
+        #startButton { background-color: #ffeb3b; color: #333; }
+        #startButton:hover { background-color: #fdd835; }
+
+        #openButton { background-color: #4caf50; color: white; display: none; }
+        #openButton:hover { background-color: #43a047; }
+
+        #skipButton { background-color: #ff9800; color: white; display: none; }
+        #skipButton:hover { background-color: #fb8c00; }
+
+        #grandpaButton { background-color: #2196f3; color: white; display: none; }
+        #grandpaButton:hover { background-color: #1e88e5; }
+
+        #continueButton { background-color: #9c27b0; color: white; display: none; }
+        #continueButton:hover { background-color: #7b1fa2; }
+
+
+        /* Grandpa Popup */
+        #grandpa-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border: 4px solid #333;
+            padding: 20px;
+            z-index: 100;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            max-width: 400px;
+            text-align: center;
+            border-radius: 15px;
+        }
+        #grandpa-popup img {
+            max-width: 150px;
+            border-radius: 50%;
+            border: 3px solid #ddd;
+            margin-bottom: 10px;
+        }
+        #grandpa-text {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.1em;
+            background: #eee;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        #popup-close {
+            margin-top: 10px;
+            background: #f44336;
             color: white;
-            display: none; /* Hidden by default */
-        }
-        #nextDayButton:hover {
-            background-color: #43a047;
+            font-size: 0.9em;
+            padding: 5px 15px;
         }
 
         /* Icon specific colors */
@@ -86,36 +168,59 @@
 
     <div id="setup-area">
         <p>Welcome to your Lemonade Stand!</p>
-        <p><img src="lemonade.jpeg" style="max-width: 100%; height: auto;"></p>
+        <p><img src="lemonade.jpeg" alt="Lemonade Stand" style="max-width: 100%; height: auto; max-height: 200px;"></p>
         <p>
             <label for="name">Enter your company name:</label>
             <input type="text" id="name" name="name" placeholder="Lemonade Stand">
         </p>
+        <button id="startButton" onclick="startGame()">Start Game</button>
     </div>
 
-    <div id="dashboard" style="display:none;">
-        <div class="stat-box">
-            <h3>Weather</h3>
-            <span id="weather-icon" class="icon-large"><i class="fa-solid fa-question"></i></span>
-            <div id="weather-desc">--</div>
+    <!-- New Dashboard Structure -->
+    <div id="dashboard-container">
+        <div id="dashboard-header">
+            <div id="company-name-display">Lemonade Stand</div>
+            <div id="date-display">Date</div>
+            <div id="flavor-text">Welcome to the season!</div>
         </div>
-        <div class="stat-box">
-            <h3>Customers</h3>
-            <div id="customer-count" class="icon-large">0</div>
-            <div id="customer-visuals" class="customer-icons"></div>
+
+        <div id="dashboard-stats">
+            <div class="stat-box">
+                <h3>Weather</h3>
+                <span id="weather-icon" class="icon-large"><i class="fa-solid fa-question"></i></span>
+                <div id="weather-desc">--</div>
+            </div>
+            <div class="stat-box">
+                <h3>Customers</h3>
+                <div id="customer-count" class="icon-large">0</div>
+                <div id="customer-visuals" class="customer-icons"></div>
+            </div>
+            <div class="stat-box">
+                <h3>Total Money</h3>
+                <span class="icon-large"><i class="fa-solid fa-money-bill-1"></i></span>
+                <div id="money-display">$0.00</div>
+            </div>
         </div>
-        <div class="stat-box">
-            <h3>Finances</h3>
-            <span class="icon-large"><i class="fa-solid fa-money-bill-1"></i></span>
-            <div id="money-display">$0.00</div>
+
+        <div id="dashboard-footer">
+            Profit Today: <span id="daily-profit-display">--</span>
         </div>
     </div>
 
     <div id="output" class="log"></div>
 
-    <div>
-        <button id="startButton" onclick="startGame()">Start Game</button>
-        <button id="nextDayButton" onclick="playDay()">Next Day</button>
+    <div id="controls-area">
+        <button id="openButton" onclick="openStand()">Open Stand</button>
+        <button id="skipButton" onclick="skipDay()">Skip Day</button>
+        <button id="grandpaButton" onclick="askGrandpa()">Ask Grandpa</button>
+        <button id="continueButton" onclick="nextDay()">Next Day</button>
+    </div>
+
+    <!-- Grandpa Popup -->
+    <div id="grandpa-popup">
+        <img src="lemonadegrandpa.png" alt="Grandpa" onerror="this.src='lemonade.jpeg'">
+        <div id="grandpa-text">"Looks like rain..."</div>
+        <button id="popup-close" onclick="closeGrandpa()">Thanks, Grandpa!</button>
     </div>
 
     <script src="lemonade.js"></script>
