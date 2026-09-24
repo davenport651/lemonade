@@ -37,7 +37,3 @@ costs pile up).
 - `index.html` / `lemonade.js` — the game
 - `lemonade.bas` — the QBasic ancestor
 - `lemonade.jpeg`, `lemonadegrandpa.png`, `lemonademom.png` — artwork
-
-Built from the `feature/calendar-and-grandpa-*` branch (Google Jules's
-calendar/forecast refactor) plus the missing grandpa-tab mechanic,
-the business decision loop, and Mom.
