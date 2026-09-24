@@ -24,3 +24,7 @@ Potential features and tweaks. Nothing here is scheduled; it's a parking lot for
 - Input costs are currently a flat 25¢/cup. Real grocery prices barely drift over one summer, so dramatic swings need a game-design justification, not a realism one.
 - Full version: fresh-lemon inventory system — buy lemons in bulk for per-unit discounts, but unused lemons spoil. Genuine decision (bulk savings vs. rot risk), but it's an entire subsystem: stock counts, spoilage timers, bulk pricing tiers.
 - Light version: event-based cost shocks instead of inventory. E.g. "Heatwave wilted the lemon crop — cups cost 40¢ this week." One flavor line + one variable tweak, no tracking overhead.
+
+## Idle / auto-play mode (2026-09-24)
+- The old version aimed to feel like an idle game: minimal user input. Add a mode where the game randomly picks the morning values (cups to make, price) each day — the player just hits "Next Day" (or it auto-advances on a timer) and watches the season play out.
+- Simplest shape: an "Idle mode" toggle; when on, the cups/price inputs are auto-filled with random (or simple-heuristic) values instead of waiting on the player.
