@@ -1,5 +1,8 @@
 # Lemonade Game — Feature Ideas
 
+## Bugs
+- "Cups to make" input has no affordability cap: the field's `max` is a static 200, so a broke player can type 200 cups and only finds out via the "You could only afford N cups!" log line after opening. Set the input's `max` dynamically each morning to `floor(money / CUP_COST)` (current money ÷ cost-per-cup), matching the clamp already in `readMorningChoices`.
+
 Potential features and tweaks. Nothing here is scheduled; it's a parking lot for playtesting notes.
 
 ## Mom guilt trip v2 (playtesting note, 2026-09-24)
