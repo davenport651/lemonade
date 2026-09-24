@@ -204,6 +204,30 @@ function log(msg) {
 
 function clearLog() { UI.output.innerHTML = ""; }
 
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+const REVEAL_DELAY_MS = 1000; // suspense pacing between day-result lines
+let skipReveal = false;
+
+// Reveal the day's results one line at a time, old-school suspense.
+// Clicking the log at any point dumps the rest instantly.
+async function revealLines(lines) {
+    skipReveal = false;
+    const skip = () => { skipReveal = true; };
+    UI.output.addEventListener("click", skip);
+    UI.output.style.cursor = "pointer";
+    UI.output.title = "Click to reveal the rest of the day";
+    try {
+        for (let i = 0; i < lines.length; i++) {
+            log(lines[i]);
+            if (!skipReveal && i < lines.length - 1) await sleep(REVEAL_DELAY_MS);
+        }
+    } finally {
+        UI.output.removeEventListener("click", skip);
+        UI.output.style.cursor = "";
+        UI.output.title = "";
+    }
+}
+
 /* --- Save / Continue --- */
 const SAVE_KEY = "lemonadeSaveV1";
 const HIGHSCORE_KEY = "lemonadeHighScore";
@@ -382,7 +406,7 @@ function readMorningChoices() {
     return { cups, price };
 }
 
-function openStand() {
+async function openStand() {
     const { cups, price } = readMorningChoices();
     const pot = GameState.currentDayPotential;
     const res = Simulation.resolveDay(pot, cups, price);
@@ -396,14 +420,22 @@ function openStand() {
     GameState.totalCupsWasted += res.spoiled;
     if (res.profit > GameState.bestDayProfit) GameState.bestDayProfit = res.profit;
 
-    log(`Opened for business!`);
-    log(`Temperature: ${pot.temp}°F — ${pot.flavor}`);
-    log(`You made ${cups} cups at ${fmt(price)} each.`);
-    log(`Customers wanted ${res.demand} cups; you sold ${res.sold}.`);
-    if (res.spoiled > 0) log(`${res.spoiled} cups went unsold...`);
-    log(`Expenses: ${fmt(res.cost)}   Revenue: ${fmt(res.revenue)}`);
-    log(`Profit: ${fmt(res.profit)}`);
+    // Day is underway: tuck the morning panel away so it can't be re-run mid-reveal.
+    UI.morningPanel.style.display = "none";
 
+    const lines = [
+        `Opened for business!`,
+        `Temperature: ${pot.temp}°F — ${pot.flavor}`,
+        `You made ${cups} cups at ${fmt(price)} each.`,
+        `Customers wanted ${res.demand} cups; you sold ${res.sold}.`,
+    ];
+    if (res.spoiled > 0) lines.push(`${res.spoiled} cups went unsold...`);
+    lines.push(`Expenses: ${fmt(res.cost)}   Revenue: ${fmt(res.revenue)}`);
+    lines.push(`Profit: ${fmt(res.profit)}`);
+
+    await revealLines(lines);
+
+    // Dashboard updates land with the punchline, not before — no spoilers.
     updateDashboardUI(true);
 
     if (res.spoiled >= MOM_SPOIL_THRESHOLD) {
