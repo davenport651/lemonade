@@ -12,7 +12,9 @@
             margin: 0 auto;
             padding: 20px;
             text-align: center;
+            background: #fffde7;
         }
+        #dashboard-container { display: none; flex-direction: column; }
         #dashboard {
             display: flex;
             justify-content: space-around;
@@ -22,21 +24,9 @@
             border-radius: 10px;
             background-color: #f9f9f9;
         }
-        .stat-box {
-            flex: 1;
-            padding: 10px;
-        }
-        .icon-large {
-            font-size: 3em;
-            display: block;
-            margin-bottom: 10px;
-        }
-        .customer-icons {
-            font-size: 1.5em;
-            letter-spacing: 2px;
-            word-break: break-all;
-            color: #555;
-        }
+        .stat-box { flex: 1; padding: 10px; }
+        .icon-large { font-size: 3em; display: block; margin-bottom: 10px; }
+        .customer-icons { font-size: 1.5em; letter-spacing: 2px; word-break: break-all; color: #555; }
         #output {
             text-align: left;
             border: 1px solid #ccc;
@@ -46,6 +36,18 @@
             margin-bottom: 20px;
             background: #fff;
         }
+        #morning-panel {
+            display: none;
+            border: 2px dashed #f9a825;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: #fff8e1;
+        }
+        #morning-panel label { display: block; margin: 10px 0; font-size: 1.1em; }
+        #morning-panel input[type="number"] { font-size: 1.1em; width: 80px; padding: 5px; }
+        #morning-panel input[type="range"] { width: 200px; vertical-align: middle; }
+        #price-display { font-weight: bold; font-size: 1.2em; }
         button {
             padding: 10px 20px;
             font-size: 1.2em;
@@ -55,67 +57,120 @@
             border-radius: 5px;
             color: #333;
             font-weight: bold;
+            margin: 5px;
         }
-        button:hover {
-            background-color: #fdd835;
-        }
-        button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-        #nextDayButton {
-            background-color: #4caf50;
-            color: white;
-            display: none; /* Hidden by default */
-        }
-        #nextDayButton:hover {
-            background-color: #43a047;
-        }
+        button:hover { background-color: #fdd835; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        #openButton { background-color: #4caf50; color: white; }
+        #openButton:hover { background-color: #43a047; }
+        #skipButton { background-color: #90a4ae; color: white; }
+        #grandpaButton { background-color: #a1887f; color: white; }
+        #nextDayButton { background-color: #4caf50; color: white; display: none; }
+        #resumeButton { display: none; background-color: #64b5f6; color: white; }
+        #high-score { display: none; font-size: 1.1em; margin-top: 10px; }
 
-        /* Icon specific colors */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border: 3px solid #ddd;
+            border-radius: 15px;
+            padding: 25px;
+            max-width: 340px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+        .popup img {
+            max-width: 150px;
+            border-radius: 50%;
+            border: 3px solid #ddd;
+            margin-bottom: 10px;
+        }
+        #mom-popup { border-color: #e57373; }
+        #mom-text, #grandpa-text { font-size: 1.15em; font-style: italic; margin-bottom: 15px; }
+
         .fa-sun { color: #ffa500; }
         .fa-cloud-sun { color: #ffcc00; }
-        .fa-cloud { color: #777; }
         .fa-snowflake { color: #00bcd4; }
         .fa-money-bill-1 { color: #4caf50; }
         .fa-user { color: #333; }
     </style>
 </head>
 <body>
-    <h1>Lemonade Stand Game</h1>
+    <h1>🍋 Lemonade Stand Game</h1>
 
     <div id="setup-area">
         <p>Welcome to your Lemonade Stand!</p>
-        <p><img src="lemonade.jpeg" style="max-width: 100%; height: auto;"></p>
+        <p><img src="lemonade.jpeg" style="max-width: 100%; height: auto;" alt="Lemonade stand"></p>
         <p>
             <label for="name">Enter your company name:</label>
             <input type="text" id="name" name="name" placeholder="Lemonade Stand">
         </p>
+        <p>
+            <button id="startButton" onclick="startGame()">Start Game</button>
+            <button id="resumeButton">Continue</button>
+        </p>
+        <p id="high-score"></p>
+        <p><small>Tip: Grandpa gives a great forecast. Totally free.*<br><span style="font-size:0.7em">*terms apply</span></small></p>
     </div>
 
-    <div id="dashboard" style="display:none;">
-        <div class="stat-box">
-            <h3>Weather</h3>
-            <span id="weather-icon" class="icon-large"><i class="fa-solid fa-question"></i></span>
-            <div id="weather-desc">--</div>
+    <div id="dashboard-container">
+        <h2 id="company-name-display"></h2>
+        <h3 id="date-display"></h3>
+        <p id="flavor-text" style="font-style: italic;"></p>
+
+        <div id="dashboard">
+            <div class="stat-box">
+                <h3>Weather</h3>
+                <span id="weather-icon" class="icon-large"><i class="fa-solid fa-question"></i></span>
+                <div id="weather-desc">--</div>
+            </div>
+            <div class="stat-box">
+                <h3>Cups Sold</h3>
+                <div id="customer-count" class="icon-large">0</div>
+                <div id="customer-visuals" class="customer-icons"></div>
+            </div>
+            <div class="stat-box">
+                <h3>Money</h3>
+                <span class="icon-large"><i class="fa-solid fa-money-bill-1"></i></span>
+                <div id="money-display">$0.00</div>
+                <div>Today: <span id="daily-profit-display">--</span></div>
+            </div>
         </div>
-        <div class="stat-box">
-            <h3>Customers</h3>
-            <div id="customer-count" class="icon-large">0</div>
-            <div id="customer-visuals" class="customer-icons"></div>
+
+        <div id="morning-panel">
+            <h3>Morning decisions</h3>
+            <label>Cups to make:
+                <input type="number" id="cups-input" min="0" max="200" value="10">
+                <small>(25¢ each in lemons &amp; sugar)</small>
+            </label>
+            <label>Price per cup:
+                <input type="range" id="price-input" min="25" max="200" step="25" value="100">
+                <span id="price-display">$1.00</span>
+            </label>
+            <div>
+                <button id="grandpaButton" onclick="askGrandpa()">🧓 Ask Grandpa</button>
+                <button id="openButton" onclick="openStand()">Open Stand</button>
+                <button id="skipButton" onclick="skipDay()">Skip Day</button>
+            </div>
         </div>
-        <div class="stat-box">
-            <h3>Finances</h3>
-            <span class="icon-large"><i class="fa-solid fa-money-bill-1"></i></span>
-            <div id="money-display">$0.00</div>
-        </div>
+
+        <div id="output"></div>
+        <div><button id="nextDayButton" onclick="nextDay()">Next Day →</button></div>
     </div>
 
-    <div id="output" class="log"></div>
+    <div id="grandpa-popup" class="popup">
+        <img src="lemonadegrandpa.png" alt="Grandpa" onerror="this.src='lemonade.jpeg'">
+        <div id="grandpa-text">"Looks like rain..."</div>
+        <button onclick="closeGrandpa()">Thanks, Grandpa!</button>
+    </div>
 
-    <div>
-        <button id="startButton" onclick="startGame()">Start Game</button>
-        <button id="nextDayButton" onclick="playDay()">Next Day</button>
+    <div id="mom-popup" class="popup">
+        <img src="lemonademom.png" alt="Mom" onerror="this.src='lemonade.jpeg'">
+        <div id="mom-text">"..."</div>
+        <button onclick="closeMom()">Sorry, Mom!</button>
     </div>
 
     <script src="lemonade.js"></script>
