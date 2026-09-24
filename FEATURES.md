@@ -19,3 +19,8 @@ Potential features and tweaks. Nothing here is scheduled; it's a parking lot for
 - Every roll needs inherent noise, like the existing `(temp-40)^1.5/6.5 ±30%` demand formula — nothing deterministic, so days stay unpredictable.
 - Possible starting formula (draft): `p2 = clamp(0.10 + max(0, temp-75)*0.02 − (price−1.00)*0.15, 0, 0.5)`, jittered ±30%; third cup at half that chance, only if they bought a second.
 - Wording fix rides along: log "N customers bought M cups" instead of "Customers wanted M cups", so the text stops implying one-cup customers.
+
+## Variable input costs / lemon inventory (design musing, 2026-09-24)
+- Input costs are currently a flat 25¢/cup. Real grocery prices barely drift over one summer, so dramatic swings need a game-design justification, not a realism one.
+- Full version: fresh-lemon inventory system — buy lemons in bulk for per-unit discounts, but unused lemons spoil. Genuine decision (bulk savings vs. rot risk), but it's an entire subsystem: stock counts, spoilage timers, bulk pricing tiers.
+- Light version: event-based cost shocks instead of inventory. E.g. "Heatwave wilted the lemon crop — cups cost 40¢ this week." One flavor line + one variable tweak, no tracking overhead.
